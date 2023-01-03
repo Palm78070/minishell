@@ -1,7 +1,8 @@
 #include "minishell.h"
 
-char	*rl_get()
+char	*rl_get(t_msh *ms)
 {
+	(void)ms;
 	static char	*line;
 
 	line = NULL;
@@ -12,6 +13,8 @@ char	*rl_get()
 	}
 	line = readline("Enter command: ");
 	if (line != NULL && *line)
+	{
 		add_history(line);
+	}
 	return (line);
 }
