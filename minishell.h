@@ -10,6 +10,12 @@
 # include <signal.h>
 //# include "/usr/local/opt/readline/include/readline"
 
+typedef struct s_lst
+{
+	char	*data;
+	struct s_lst	*next;
+}	t_lst;
+
 typedef struct s_msh
 {
 	char	*line;
@@ -17,6 +23,10 @@ typedef struct s_msh
 }	t_msh;
 
 void	ft_handler(int signum);
+//linked_list.c
+void	free_list(t_lst *lst);
+void	print_list(t_lst *lst);
+t_lst	*insertEnd(t_lst *lst, char *s);
 //clear.c
 void	ft_clear(t_msh *ms);
 void	ft_error(char *s, t_msh *ms);

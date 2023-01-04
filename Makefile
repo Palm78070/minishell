@@ -5,6 +5,7 @@ CFLAGS = -Wall -Werror -Wextra -lreadline
 
 LIBFT = libft/libft.a
 LIBFT_FLAGS = -Llibft
+LIB_INC = -Ilibft
 
 #READLINE = -Iusr/local/opt/readline/include
 #READLINE_FLAGS = -Lusr/local/opt/readline
@@ -12,6 +13,7 @@ LIBFT_FLAGS = -Llibft
 SRCS = minishell.c \
 	readline.c \
 	lexer.c \
+	linked_list.c \
 	clear.c \
 
 all: $(NAME)
