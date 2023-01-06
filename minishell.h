@@ -11,6 +11,19 @@
 # include <signal.h>
 //# include "/usr/local/opt/readline/include/readline"
 
+enum	state
+{
+	STR = 1,
+	SPACE = 2,
+	S_QUOTE = 3,
+	D_QUOTE = 4,
+	PIPE = 5,
+	REDIRECT_I = 6,
+	REDIRECT_O = 7,
+	HEREDOC = 8,
+	APPEND = 9
+};
+
 typedef struct s_lst
 {
 	char	*data;
@@ -21,11 +34,12 @@ typedef struct s_msh
 {
 	char	*line;
 	struct	sigaction	sa;
+	int	state;
 }	t_msh;
 
 void	ft_handler(int signum);
 //lexer.c
-void	ft_token(char *s);
+void	ft_token(t_msh *ms);
 //linked_list.c
 void	free_list(t_lst *lst);
 void	print_list(t_lst *lst);

@@ -6,7 +6,7 @@
 /*   By: rthammat <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/03 21:06:33 by rthammat          #+#    #+#             */
-/*   Updated: 2023/01/05 00:43:15 by rath             ###   ########.fr       */
+/*   Updated: 2023/01/06 22:44:49 by rthammat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,71 +22,146 @@ char	*trim_head(char *s, int delim_indx)
 	while (s[++delim_indx])
 		res[++i] = s[delim_indx];
 	res[++i] = '\0';
-	//free(s);
+	free(s);
 	return (res);
 }
 
-t_lst	*ft_token2(char *s, t_lst *lst)
+int	check_state(char *s, int i)
+{
+	if (ft_isalnum(s[i]))
+		return (STR);
+	if (ft_isspace(s[i]))
+		return (SPACE);
+	if (s[i + 1])
+	{
+		if (s[i] == '<' && s[i + 1] == '<')
+			return (HEREDOC);
+		if (s[i] == '>' && s[i + 1] == '>')
+			return (APPEND);
+	}
+	if (s[i] == '<')
+		return (REDIRECT_I);
+	if (s[i] == '>')
+		return (REDIRECT_O);
+	if (s[i] == '\'')
+		return (S_QUOTE);
+	if (s[i] == '\"')
+		return (D_QUOTE);
+	if (s[i] == '|')
+		return (PIPE);
+	return (0);
+}
+
+t_lst	*get_quote(t_msh *ms, t_lst *lst, int i)
+{
+	char	*str_tmp;
+	char	quote;
+
+	str_tmp = NULL;
+	quote = ms->line[i];
+	if (i > 0)
+	{
+		str_tmp = ft_substr(ms->line, 0, i);
+		lst = insertEnd(lst, str_tmp);
+		free(str_tmp);
+	}
+	else
+	{
+		if (ms->state == S_QUOTE)
+			lst = insertEnd(lst, "\'");
+		else
+			lst = insertEnd(lst, "\"");
+	}
+	//ms->line = trim_head(ms->line, i);
+	//printf("ms->line %s\n", ms->line);
+	return (lst);
+}
+
+t_lst	*lex_quote(t_msh *ms, t_lst *lst, int i)
+{
+	char	quote;
+	char	*str_tmp;
+
+	quote = ms->line[i];
+	str_tmp = NULL;
+	lst = get_quote(ms, lst, i);
+	ms->line = trim_head(ms->line, i);
+	i = 0;
+	while (ms->line[i] && ms->line[i] != quote)
+		++i;
+	str_tmp = ft_substr(ms->line, 0, i);
+	lst = insertEnd(lst, str_tmp);
+	free(str_tmp);
+	ms->line = trim_head(ms->line, --i);
+	lst = get_quote(ms, lst, i);
+	printf("ms->line after trim %s\n", ms->line);
+	ms->line = trim_head(ms->line, i);
+	printf("ms->line after trim %s\n", ms->line);
+	return (lst);
+}
+
+void	ft_token(t_msh *ms)
 {
 	int	i;
 	char	*str_tmp;
-	//t_lst	*lst;
+	t_lst	*lst;
 
 	i = 0;
-	//lst = NULL;
+	lst = NULL;
 	str_tmp = NULL;
-	while (s[i])
+	ms->state = 0;
+	while (ms->line && ms->line[i])
 	{
-		/*if (ft_isspace(s[i]))
-		{
-			while (s[i] && ft_isspace(s[i]))
-				++i;
-			if (--i > 0)
-			{
-				str_tmp = ft_substr(s, 0, i);
-				lst = insertEnd(lst, str_tmp);
-				free(str_tmp);
-			}
-			s = trim_head(s, i);
-			i = 0;
-		}*/
-		if (s[i] == '|')
+		ms->state = check_state(ms->line, i);
+		if (ms->state == SPACE)
 		{
 			if (i > 0)
 			{
-				str_tmp = ft_substr(s, 0, i);
+				str_tmp = ft_substr(ms->line, 0, i);
+				lst = insertEnd(lst, str_tmp);
+				free(str_tmp);
+			}
+			while (ms->line[i] && ft_isspace(ms->line[i]))
+				++i;
+			ms->line = trim_head(ms->line, --i);
+			i = 0;
+		}
+		else if (ms->state == PIPE)
+		{
+			if (i > 0)
+			{
+				str_tmp = ft_substr(ms->line, 0, i);
 				lst = insertEnd(lst, str_tmp);
 				free(str_tmp);
 			}
 			lst = insertEnd(lst, "|");
-			s = trim_head(s, i);
+			ms->line = trim_head(ms->line, i);
+			i = 0;
+		}
+		else if (ms->state == S_QUOTE || ms->state == D_QUOTE)
+		{
+			/*if (i > 0)
+			{
+				str_tmp = ft_substr(ms->line, 0, i);
+				lst = insertEnd(lst, str_tmp);
+				free(str_tmp);
+			}
+			if (ms->state == S_QUOTE)
+				lst = insertEnd(lst, "\'");
+			else
+				lst = insertEnd(lst, "\"");*/
+			lst = lex_quote(ms, lst, i);
 			i = 0;
 		}
 		else
 			++i;
 	}
-	str_tmp = ft_substr(s, 0, i);
-	lst = insertEnd(lst, str_tmp);
-	free(str_tmp);
-	return (lst);
-	//print_list(lst);
-	//free_list(lst);
-}
-
-void	ft_token(char *s)
-{
-	char	**sp;
-	t_lst	*lst;
-	int	i;
-
-	sp = ft_split(s, ' ');
-	lst = NULL;
-	i = -1;
-	while (sp[++i])
+	if (ms->line && ms->line[0])
 	{
-		lst = ft_token2(sp[i], lst);
+		str_tmp = ft_substr(ms->line, 0, i);
+		lst = insertEnd(lst, str_tmp);
+		free(str_tmp);
 	}
-	free_double(sp);
 	print_list(lst);
 	free_list(lst);
 }
