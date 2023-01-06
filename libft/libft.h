@@ -6,7 +6,7 @@
 /*   By: rthammat <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/02/21 22:57:55 by rthammat          #+#    #+#             */
-/*   Updated: 2022/08/12 02:08:31 by rthammat         ###   ########.fr       */
+/*   Updated: 2023/01/04 22:55:11 by rath             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,7 @@ typedef struct s_list
 //Identified function
 int				ft_isalpha(int c);
 int				ft_isdigit(int c);
+int				ft_isspace(char c);
 int				ft_isalnum(int c);
 int				ft_isascii(int c);
 int				ft_isprint(int c);

@@ -4,6 +4,7 @@
 # define LLONG_MAX 9223372036854775807
 
 # include <stdio.h>
+# include "libft.h"
 # include <stdlib.h>
 # include <readline/readline.h>
 # include <readline/history.h>
@@ -23,6 +24,8 @@ typedef struct s_msh
 }	t_msh;
 
 void	ft_handler(int signum);
+//lexer.c
+void	ft_token(char *s);
 //linked_list.c
 void	free_list(t_lst *lst);
 void	print_list(t_lst *lst);

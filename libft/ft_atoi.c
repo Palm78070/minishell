@@ -6,27 +6,11 @@
 /*   By: rthammat <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/02/27 20:08:40 by rthammat          #+#    #+#             */
-/*   Updated: 2022/08/11 21:20:36 by rthammat         ###   ########.fr       */
+/*   Updated: 2023/01/04 22:56:27 by rath             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
-
-static int	is_instr(char c, char *s)
-{
-	while (*s)
-	{
-		if (c == *s)
-			return (1);
-		++s;
-	}
-	return (0);
-}
-
-static int	ft_isspace(char c)
-{
-	return (is_instr(c, " \t\r\n\v\f"));
-}
 
 int	ft_atoi(const char *str)
 {

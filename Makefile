@@ -3,9 +3,9 @@ NAME = minishell
 CC = gcc
 CFLAGS = -Wall -Werror -Wextra -lreadline
 
-LIBFT = libft/libft.a
-LIBFT_FLAGS = -Llibft
-LIB_INC = -Ilibft
+LIBFT = ./libft/libft.a
+#LIBFT_FLAGS = -Llibft
+LIB_I = -I./libft/
 
 #READLINE = -Iusr/local/opt/readline/include
 #READLINE_FLAGS = -Lusr/local/opt/readline
@@ -19,7 +19,8 @@ SRCS = minishell.c \
 all: $(NAME)
 
 $(NAME): $(LIBFT) $(SRCS)
-	$(CC) $(CFLAGS) $^ $(LIBFT_FLAGS) -o $@ 
+	$(CC) $(CFLAGS) $^ $(LIB_I) -o $@ 
+	#$(CC) $(CFLAGS) $^ $(LIB_INC) $(LIBFT_FLAGS) -o $@ 
 
 $(LIBFT):
 	@make -C ./libft

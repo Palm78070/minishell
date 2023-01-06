@@ -17,7 +17,7 @@ void	print_list(t_lst *lst)
 {
 	if (lst == NULL)
 		return ;
-	printf("%s\n", lst->data);
+	printf("lexer %s\n", lst->data);
 	print_list(lst->next);
 }
 
@@ -25,6 +25,8 @@ t_lst	*create_node(char *s)
 {
 	t_lst	*ptr;
 
+	if (s[0] == '\0')
+		return (NULL);
 	ptr = (t_lst *)malloc(sizeof(t_lst));
 	if (!ptr)
 		return (NULL);

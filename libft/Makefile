@@ -8,6 +8,7 @@ BUFF:= BUFFER_SIZE=42
 SRCS:= ft_isalpha.c \
 	ft_isdigit.c \
 	ft_isalnum.c \
+	ft_isspace.c \
 	ft_isascii.c \
 	ft_isprint.c \
 	ft_toupper.c \
