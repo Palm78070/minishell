@@ -14,12 +14,12 @@
 enum	state
 {
 	STR = 1,
-	SPACE = 2,
-	S_QUOTE = 3,
-	D_QUOTE = 4,
-	PIPE = 5,
-	REDIRECT_I = 6,
-	REDIRECT_O = 7,
+	SPACE = ' ',
+	S_QUOTE = '\'',
+	D_QUOTE = '\"',
+	PIPE = '|',
+	REDIRECT_I = '<',
+	REDIRECT_O = '>',
 	HEREDOC = 8,
 	APPEND = 9
 };
@@ -39,7 +39,7 @@ typedef struct s_msh
 
 void	ft_handler(int signum);
 //lexer.c
-void	ft_token(t_msh *ms);
+void	ft_lexer(t_msh *ms);
 //linked_list.c
 void	free_list(t_lst *lst);
 void	print_list(t_lst *lst);

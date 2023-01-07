@@ -6,7 +6,7 @@
 /*   By: rthammat <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/03 19:44:51 by rthammat          #+#    #+#             */
-/*   Updated: 2023/01/06 22:45:01 by rthammat         ###   ########.fr       */
+/*   Updated: 2023/01/07 23:07:27 by rthammat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,7 +57,7 @@ int	main(void)
 		if (is_exit(ms->line))
 			break;
 		printf("input from readline %s\n", ms->line);
-		ft_token(ms);
+		ft_lexer(ms);
 	}
 	ft_clear(ms);
 	return (0);

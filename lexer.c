@@ -6,7 +6,7 @@
 /*   By: rthammat <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/03 21:06:33 by rthammat          #+#    #+#             */
-/*   Updated: 2023/01/06 22:44:49 by rthammat         ###   ########.fr       */
+/*   Updated: 2023/01/07 23:07:20 by rthammat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,77 +30,143 @@ int	check_state(char *s, int i)
 {
 	if (ft_isalnum(s[i]))
 		return (STR);
-	if (ft_isspace(s[i]))
+	else if (ft_isspace(s[i]))
 		return (SPACE);
-	if (s[i + 1])
+	else if ((s[i] == '<' || s[i] == '>') && s[i + 1])
 	{
 		if (s[i] == '<' && s[i + 1] == '<')
 			return (HEREDOC);
 		if (s[i] == '>' && s[i + 1] == '>')
 			return (APPEND);
 	}
-	if (s[i] == '<')
+	else if (s[i] == '<')
 		return (REDIRECT_I);
-	if (s[i] == '>')
+	else if (s[i] == '>')
 		return (REDIRECT_O);
-	if (s[i] == '\'')
+	else if (s[i] == '\'')
 		return (S_QUOTE);
-	if (s[i] == '\"')
+	else if (s[i] == '\"')
 		return (D_QUOTE);
-	if (s[i] == '|')
+	else if (s[i] == '|')
 		return (PIPE);
 	return (0);
 }
 
-t_lst	*get_quote(t_msh *ms, t_lst *lst, int i)
+t_lst	*token_quote(t_msh *ms, t_lst *lst, int *index)
+{
+	char	quote;
+	char	*str_tmp;
+	int	i;
+
+	i = *index;
+	quote = ms->line[i];
+	str_tmp = NULL;
+	++i;
+	while (ms->line[i] && ms->line[i] != quote)
+		++i;
+	str_tmp = ft_substr(ms->line, 0, ++i);
+	lst = insertEnd(lst, str_tmp);
+	free(str_tmp);
+	ms->line = trim_head(ms->line, --i);
+	*index = 0;
+	return (lst);
+}
+
+t_lst	*token_space(t_msh *ms, t_lst *lst, int *index)
 {
 	char	*str_tmp;
-	char	quote;
+	int	i;
 
 	str_tmp = NULL;
-	quote = ms->line[i];
+	i = *index;
+	if (i > 0)
+	{
+		str_tmp = ft_substr(ms->line, 0, i);
+		lst = insertEnd(lst, str_tmp);
+		lst = insertEnd(lst, " ");
+		free(str_tmp);
+	}
+	while (ms->line[i] && ft_isspace(ms->line[i]))
+		++i;
+	ms->line = trim_head(ms->line, --i);
+	*index = 0;
+	return (lst);
+}
+
+t_lst	*token_pipe(t_msh *ms, t_lst *lst, int *index)
+{
+	char	*str_tmp;
+	int	i;
+
+	str_tmp = NULL;
+	i = *index;
 	if (i > 0)
 	{
 		str_tmp = ft_substr(ms->line, 0, i);
 		lst = insertEnd(lst, str_tmp);
 		free(str_tmp);
 	}
-	else
-	{
-		if (ms->state == S_QUOTE)
-			lst = insertEnd(lst, "\'");
-		else
-			lst = insertEnd(lst, "\"");
-	}
-	//ms->line = trim_head(ms->line, i);
-	//printf("ms->line %s\n", ms->line);
+	lst = insertEnd(lst, "|");
+	ms->line = trim_head(ms->line, i);
+	*index = 0;
 	return (lst);
 }
 
-t_lst	*lex_quote(t_msh *ms, t_lst *lst, int i)
+t_lst	*token_redirect(t_msh *ms, t_lst *lst, int *index)
 {
-	char	quote;
 	char	*str_tmp;
+	int	i;
 
-	quote = ms->line[i];
 	str_tmp = NULL;
-	lst = get_quote(ms, lst, i);
+	i = *index;
+	if (i > 0)
+	{
+		str_tmp = ft_substr(ms->line, 0, i);
+		lst = insertEnd(lst, str_tmp);
+		free(str_tmp);
+	}
+	if (ms->state == REDIRECT_I)
+		lst = insertEnd(lst, "<");
+	else if (ms->state == REDIRECT_O)
+		lst = insertEnd(lst, ">");
 	ms->line = trim_head(ms->line, i);
-	i = 0;
-	while (ms->line[i] && ms->line[i] != quote)
+	*index = 0;
+	return (lst);
+}
+
+t_lst	*token_double_arrow(t_msh *ms, t_lst *lst, int *index)
+{
+	char	*str_tmp;
+	int	i;
+	char	quote;
+
+	str_tmp = NULL;
+	i = *index;
+	if (ms->state == HEREDOC)
+		quote = '<';
+	if (ms->state == APPEND)
+		quote = '>';
+	if (i > 0)
+	{
+		str_tmp = ft_substr(ms->line, 0, i);
+		lst = insertEnd(lst, str_tmp);
+		free(str_tmp);
+		ms->line = trim_head(ms->line, --i);
+	}
+	while (ms->line[i] && ms->line[i] == quote)
 		++i;
 	str_tmp = ft_substr(ms->line, 0, i);
 	lst = insertEnd(lst, str_tmp);
-	free(str_tmp);
-	ms->line = trim_head(ms->line, --i);
-	lst = get_quote(ms, lst, i);
-	printf("ms->line after trim %s\n", ms->line);
+	/*if (ms->state == HEREDOC)
+		lst = insertEnd(lst, "<<");
+	else if (ms->state == APPEND)
+		lst = insertEnd(lst, ">>");*/
 	ms->line = trim_head(ms->line, i);
-	printf("ms->line after trim %s\n", ms->line);
+	*index = 0;
 	return (lst);
 }
 
-void	ft_token(t_msh *ms)
+void	ft_lexer(t_msh *ms)
 {
 	int	i;
 	char	*str_tmp;
@@ -114,45 +180,15 @@ void	ft_token(t_msh *ms)
 	{
 		ms->state = check_state(ms->line, i);
 		if (ms->state == SPACE)
-		{
-			if (i > 0)
-			{
-				str_tmp = ft_substr(ms->line, 0, i);
-				lst = insertEnd(lst, str_tmp);
-				free(str_tmp);
-			}
-			while (ms->line[i] && ft_isspace(ms->line[i]))
-				++i;
-			ms->line = trim_head(ms->line, --i);
-			i = 0;
-		}
+			lst = token_space(ms, lst, &i);
 		else if (ms->state == PIPE)
-		{
-			if (i > 0)
-			{
-				str_tmp = ft_substr(ms->line, 0, i);
-				lst = insertEnd(lst, str_tmp);
-				free(str_tmp);
-			}
-			lst = insertEnd(lst, "|");
-			ms->line = trim_head(ms->line, i);
-			i = 0;
-		}
+			lst = token_pipe(ms, lst, &i);
 		else if (ms->state == S_QUOTE || ms->state == D_QUOTE)
-		{
-			/*if (i > 0)
-			{
-				str_tmp = ft_substr(ms->line, 0, i);
-				lst = insertEnd(lst, str_tmp);
-				free(str_tmp);
-			}
-			if (ms->state == S_QUOTE)
-				lst = insertEnd(lst, "\'");
-			else
-				lst = insertEnd(lst, "\"");*/
-			lst = lex_quote(ms, lst, i);
-			i = 0;
-		}
+			lst = token_quote(ms, lst, &i);
+		else if (ms->state == REDIRECT_I || ms->state == REDIRECT_O)
+			lst = token_redirect(ms, lst, &i);
+		else if (ms->state == HEREDOC || ms->state == APPEND)
+			lst = token_double_arrow(ms, lst, &i);
 		else
 			++i;
 	}
