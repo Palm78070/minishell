@@ -12,6 +12,7 @@ LIB_I = -I./libft/
 
 SRCS = minishell.c \
 	readline.c \
+	token.c \
 	lexer.c \
 	linked_list.c \
 	clear.c \

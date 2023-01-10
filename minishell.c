@@ -6,7 +6,7 @@
 /*   By: rthammat <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/03 19:44:51 by rthammat          #+#    #+#             */
-/*   Updated: 2023/01/07 23:07:27 by rthammat         ###   ########.fr       */
+/*   Updated: 2023/01/10 18:04:59 by rath             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,20 +16,14 @@ t_msh *ms;
 
 int	is_exit(char *s)
 {
-	if (s[0] == 'e' && s[1] == 'x' && s[2] == 'i' && s[3] == 't')
+	if (s[0] == 'e' && s[1] == 'x' && s[2] == 'i' && s[3] == 't'
+		&& s[4] == '\0')
 	{
 		printf("exit\n");
 		return (1);
 	}
 	return (0);
 }
-
-/*int	is_quit(char *s)
-  {
-  if (is_exit(s) || is_sigquit(s))
-  return (1);
-  return (0);
-  }*/
 
 void	ft_handler(int signum)
 {

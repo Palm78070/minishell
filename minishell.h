@@ -21,7 +21,9 @@ enum	state
 	REDIRECT_I = '<',
 	REDIRECT_O = '>',
 	HEREDOC = 8,
-	APPEND = 9
+	APPEND = 9,
+	AND_IF = 10,
+	OR_IF = 11
 };
 
 typedef struct s_lst
@@ -38,7 +40,15 @@ typedef struct s_msh
 }	t_msh;
 
 void	ft_handler(int signum);
+//token.c
+t_lst	*token_quote(t_msh *ms, t_lst *lst, int *index);
+t_lst	*token_space(t_msh *ms, t_lst *lst, int *index);
+t_lst	*token_pipe(t_msh *ms, t_lst *lst, int *index);
+t_lst	*token_redirect(t_msh *ms, t_lst *lst, int *index);
+t_lst	*token_double_sign(t_msh *ms, t_lst *lst, int *index);
+//t_lst	*token_and_or(t_msh *ms, t_lst *lst, int *index);
 //lexer.c
+char    *trim_head(char *s, int delim_indx);
 void	ft_lexer(t_msh *ms);
 //linked_list.c
 void	free_list(t_lst *lst);
