@@ -14,7 +14,7 @@
 enum	state
 {
 	STR = 1,
-	SPACE = ' ',
+	SP = ' ',
 	S_QUOTE = '\'',
 	D_QUOTE = '\"',
 	PIPE = '|',
@@ -46,9 +46,11 @@ t_lst	*token_space(t_msh *ms, t_lst *lst, int *index);
 t_lst	*token_pipe(t_msh *ms, t_lst *lst, int *index);
 t_lst	*token_redirect(t_msh *ms, t_lst *lst, int *index);
 t_lst	*token_double_sign(t_msh *ms, t_lst *lst, int *index);
-//t_lst	*token_and_or(t_msh *ms, t_lst *lst, int *index);
+//lexer_utils.c
+char	*trim_head(char *s, int delim_indx);
+int	check_state(char *s, int i);
+t_lst	*insert_str(t_msh *ms, t_lst *lst, int i);
 //lexer.c
-char    *trim_head(char *s, int delim_indx);
 void	ft_lexer(t_msh *ms);
 //linked_list.c
 void	free_list(t_lst *lst);
