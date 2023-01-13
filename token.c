@@ -27,10 +27,8 @@ t_lst	*token_quote(t_msh *ms, t_lst *lst, int *index)
 
 t_lst	*token_space(t_msh *ms, t_lst *lst, int *index)
 {
-	char	*str_tmp;
 	int	i;
 
-	str_tmp = NULL;
 	i = *index;
 	if (i > 0)
 		lst = insert_str(ms, lst, i);
@@ -44,10 +42,8 @@ t_lst	*token_space(t_msh *ms, t_lst *lst, int *index)
 
 t_lst	*token_pipe(t_msh *ms, t_lst *lst, int *index)
 {
-	char	*str_tmp;
 	int	i;
 
-	str_tmp = NULL;
 	i = *index;
 	if (i > 0)
 		lst = insert_str(ms, lst, i);
@@ -59,10 +55,8 @@ t_lst	*token_pipe(t_msh *ms, t_lst *lst, int *index)
 
 t_lst	*token_redirect(t_msh *ms, t_lst *lst, int *index)
 {
-	char	*str_tmp;
 	int	i;
 
-	str_tmp = NULL;
 	i = *index;
 	if (i > 0)
 		lst = insert_str(ms, lst, i);
